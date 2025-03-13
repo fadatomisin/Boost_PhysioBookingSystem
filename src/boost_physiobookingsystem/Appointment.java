@@ -3,7 +3,7 @@ public class Appointment {
     private Patient patient;
     private String treatment;
     private String timeSlot;
-    private String status;  // "Booked", "Cancelled", "Attended"
+    private String status;  // "Available", "Booked", "Cancelled"
 
     public Appointment(Physiotherapist physiotherapist, String treatment, String timeSlot) {
         this.physiotherapist = physiotherapist;
@@ -13,7 +13,7 @@ public class Appointment {
     }
 
     public void book(Patient patient) {
-        if (status.equals("Available")) {
+        if (this.status.equals("Available")) {
             this.patient = patient;
             this.status = "Booked";
             patient.bookAppointment(this);
@@ -23,13 +23,18 @@ public class Appointment {
     }
 
     public void cancel() {
-        if (status.equals("Booked")) {
+        if (this.status.equals("Booked") && this.patient != null) {  // Prevent null error
             this.patient.cancelAppointment(this);
             this.patient = null;
             this.status = "Cancelled";
         }
     }
 
+    public String getStatus() {
+        return status;  // ✅ Use the correct `status` field instead of `isBooked`
+    }
+
+    @Override
     public String toString() {
         return "Treatment: " + treatment + ", Time: " + timeSlot + ", Status: " + status +
                (patient != null ? ", Patient: " + patient.getName() : "");
