@@ -13,25 +13,37 @@ public class BoostPhysioBookingSystem {
     }
 
     public static void setupData() {
-        
         Physiotherapist p1 = new Physiotherapist("Dr. Smith", "Sports Injuries");
         Physiotherapist p2 = new Physiotherapist("Dr. Johnson", "Neurological Rehab");
         Physiotherapist p3 = new Physiotherapist("Dr. Alonge", "Knee Surgery");
-        
+        Physiotherapist p4 = new Physiotherapist("Dr. Fadahunsi", "Back Pain");
+        Physiotherapist p5 = new Physiotherapist("Dr. Tomisin", "Posture Correction");
+        Physiotherapist p6 = new Physiotherapist("Dr. Daniel", "Spinal Therapy");
+
         physiotherapists.add(p1);
         physiotherapists.add(p2);
         physiotherapists.add(p3);
+        physiotherapists.add(p4);
+        physiotherapists.add(p5);
+        physiotherapists.add(p6);
 
-
-        Patient patient1 = new Patient(101, "Alice");
-        Patient patient2 = new Patient(102, "Bob");
-        patients.add(patient1);
-        patients.add(patient2);
+        String[] patientNames = {"Alice", "Bob", "Tunde", "Chinedu", "Fatima", "Bolu", "Ngozi", "Ibrahim", "Chioma", "Oluwatobi", "Esther", "Samuel", "Adewale", "Grace", "Hassan", "Kemi", "Ezekiel", "Bukola", "Uchenna", "Mary"};
+        for (int i = 0; i < patientNames.length; i++) {
+            patients.add(new Patient(101 + i, patientNames[i]));
+        }
 
         p1.addAppointment(new Appointment(p1, "Physio Therapy", "Monday 10 AM"));
         p1.addAppointment(new Appointment(p1, "Muscle Recovery", "Tuesday 2 PM"));
         p2.addAppointment(new Appointment(p2, "Stroke Rehab", "Wednesday 1 PM"));
+        p2.addAppointment(new Appointment(p2, "Neurological Therapy", "Friday 11 AM"));
         p3.addAppointment(new Appointment(p3, "Knee Surgery", "Tuesday 12 PM"));
+        p3.addAppointment(new Appointment(p3, "Post-Surgery Checkup", "Thursday 4 PM"));
+        p4.addAppointment(new Appointment(p4, "Lower Back Therapy", "Thursday 9 AM"));
+        p4.addAppointment(new Appointment(p4, "Pain Management", "Monday 3 PM"));
+        p5.addAppointment(new Appointment(p5, "Posture Alignment", "Friday 3 PM"));
+        p5.addAppointment(new Appointment(p5, "Spinal Adjustment", "Wednesday 10 AM"));
+        p6.addAppointment(new Appointment(p6, "Spinal Decompression", "Saturday 11 AM"));
+        p6.addAppointment(new Appointment(p6, "Chronic Pain Therapy", "Tuesday 5 PM"));
     }
 
     private static void menu() {
