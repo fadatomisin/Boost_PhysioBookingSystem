@@ -38,4 +38,8 @@ public class Physiotherapist {
             System.out.println(appointment);
         }
     }
+    public int getAttendedAppointmentsCount() {
+    return (int) appointments.stream().filter(Appointment::isAttended).count();
+}
+
 }

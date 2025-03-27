@@ -13,6 +13,7 @@ public class BoostPhysioBookingSystem {
     }
 
     public static void setupData() {
+        
         Physiotherapist p1 = new Physiotherapist("Dr. Smith", "Sports Injuries");
         Physiotherapist p2 = new Physiotherapist("Dr. Johnson", "Neurological Rehab");
         Physiotherapist p3 = new Physiotherapist("Dr. Alonge", "Knee Surgery");
@@ -26,6 +27,7 @@ public class BoostPhysioBookingSystem {
         physiotherapists.add(p4);
         physiotherapists.add(p5);
         physiotherapists.add(p6);
+
 
         String[] patientNames = {"Alice", "Bob", "Tunde", "Chinedu", "Fatima", "Bolu", "Ngozi", "Ibrahim", "Chioma", "Oluwatobi", "Esther", "Samuel", "Adewale", "Grace", "Hassan", "Kemi", "Ezekiel", "Bukola", "Uchenna", "Mary"};
         for (int i = 0; i < patientNames.length; i++) {
@@ -53,7 +55,10 @@ public class BoostPhysioBookingSystem {
             System.out.println("2. Book an Appointment");
             System.out.println("3. Cancel an Appointment");
             System.out.println("4. View All Appointments");
-            System.out.println("5. Exit");
+            System.out.println("5. Search Physiotherapists by Expertise");
+            System.out.println("6. Generate End-of-Term Report");
+            System.out.println("7. Exit");
+            
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine();  
@@ -72,6 +77,13 @@ public class BoostPhysioBookingSystem {
                     viewAllAppointments();
                     break;
                 case 5:
+                    searchByExpertise();
+                    break;
+                case 6:
+                    generateEndOfTermReport();
+                    break;
+
+                case 7:
                     System.out.println("Exiting system...");
                     return;
                 default:
@@ -159,6 +171,29 @@ public class BoostPhysioBookingSystem {
             physio.displayAppointments();
         }
     }
+    
+    private static void searchByExpertise() {
+    System.out.print("Enter area of expertise: ");
+    String expertise = scanner.nextLine().toLowerCase();
+    
+    List<Physiotherapist> filteredPhysios = new ArrayList<>();
+    for (Physiotherapist p : physiotherapists) {
+        if (p.getExpertise().toLowerCase().contains(expertise)) {
+            filteredPhysios.add(p);
+        }
+    }
+
+    if (filteredPhysios.isEmpty()) {
+        System.out.println("No physiotherapist found with expertise in " + expertise);
+    } else {
+        System.out.println("\nPhysiotherapists specializing in " + expertise + ":");
+        for (Physiotherapist p : filteredPhysios) {
+            System.out.println("- " + p.getName() + " (" + p.getExpertise() + ")");
+            p.displayAppointments();
+        }
+    }
+}
+
 
     public static Patient findPatientById(int id) {
         return patients.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
@@ -167,4 +202,27 @@ public class BoostPhysioBookingSystem {
     public static Physiotherapist findPhysiotherapistByName(String name) {
         return physiotherapists.stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
+    
+    private static void generateEndOfTermReport() {
+    System.out.println("\n--- End of Term Report ---");
+
+    // Print all appointments
+    for (Physiotherapist p : physiotherapists) {
+        System.out.println("\nPhysiotherapist: " + p.getName());
+        for (Appointment a : p.getAppointments()) {
+            String status = a.isBooked() ? (a.isAttended() ? "Attended" : "Booked") : "Available";
+            System.out.println("  - " + a.getTreatmentName() + " | Patient: " + (a.getPatient() != null ? a.getPatient().getName() : "None") + " | Time: " + a.getTimeSlot() + " | Status: " + status);
+        }
+    }
+
+    // Sort physiotherapists by number of attended appointments
+    physiotherapists.sort((p1, p2) -> Integer.compare(p2.getAttendedAppointmentsCount(), p1.getAttendedAppointmentsCount()));
+
+    // Print physiotherapist ranking
+    System.out.println("\n--- Physiotherapist Ranking (by attended appointments) ---");
+    for (Physiotherapist p : physiotherapists) {
+        System.out.println(p.getName() + " - " + p.getAttendedAppointmentsCount() + " attended appointments");
+    }
+}
+
 }
