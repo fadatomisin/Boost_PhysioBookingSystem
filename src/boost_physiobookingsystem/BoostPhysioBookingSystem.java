@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Iterator;
+
 
 public class BoostPhysioBookingSystem {
     private static List<Physiotherapist> physiotherapists = new ArrayList<>();
@@ -100,71 +102,83 @@ public class BoostPhysioBookingSystem {
     }
 
     private static void bookAppointment() {
-        System.out.print("Enter Patient ID: ");
-        int patientId = scanner.nextInt();
-        scanner.nextLine();  
+    System.out.print("Enter Patient ID: ");
+    int patientId = scanner.nextInt();
+    scanner.nextLine();  
 
-        Patient patient = findPatientById(patientId);
-        if (patient == null) {
-            System.out.println("Patient not found.");
-            return;
-        }
-
-        System.out.print("Enter Physiotherapist Name: ");
-        String physioName = scanner.nextLine();
-        Physiotherapist physio = findPhysiotherapistByName(physioName);
-
-        if (physio == null) {
-            System.out.println("Physiotherapist not found.");
-            return;
-        }
-
-        System.out.println("Available Appointments:");
-        for (Appointment appointment : physio.getAppointments()) {
-            if (appointment.toString().contains("Available")) {
-                System.out.println(appointment);
-            }
-        }
-
-        System.out.print("Enter Time Slot to Book: ");
-        String timeSlot = scanner.nextLine();
-        for (Appointment appointment : physio.getAppointments()) {
-            if (appointment.toString().contains(timeSlot) && appointment.toString().contains("Available")) {
-                appointment.book(patient);
-                System.out.println("Appointment booked successfully!");
-                return;
-            }
-        }
-        System.out.println("No available appointment found.");
+    Patient patient = findPatientById(patientId);
+    if (patient == null) {
+        System.out.println("Patient not found.");
+        return;
     }
 
-    private static void cancelAppointment() {
-        System.out.print("Enter Patient ID: ");
-        int patientId = scanner.nextInt();
-        scanner.nextLine();  
+    System.out.print("Enter Physiotherapist Name: ");
+    String physioName = scanner.nextLine();
+    Physiotherapist physio = findPhysiotherapistByName(physioName);
 
-        Patient patient = findPatientById(patientId);
-        if (patient == null) {
-            System.out.println("Patient not found.");
-            return;
-        }
+    if (physio == null) {
+        System.out.println("Physiotherapist not found.");
+        return;
+    }
 
-        System.out.println("Your Appointments:");
-        for (Appointment appointment : patient.getBookedAppointments()) {
+    System.out.println("Available Appointments:");
+    for (Appointment appointment : physio.getAppointments()) {
+        if (!appointment.isBooked()) { // Use isBooked() instead of string checking
             System.out.println(appointment);
         }
-
-        System.out.print("Enter Time Slot to Cancel: ");
-        String timeSlot = scanner.nextLine();
-        for (Appointment appointment : patient.getBookedAppointments()) {
-            if (appointment.toString().contains(timeSlot)) {
-                appointment.cancel();
-                System.out.println("Appointment cancelled.");
-                return;
-            }
-        }
-        System.out.println("Appointment not found.");
     }
+
+    System.out.print("Enter Time Slot to Book: ");
+    String timeSlot = scanner.nextLine();
+    
+    for (Appointment appointment : physio.getAppointments()) {
+        if (appointment.getTimeSlot().equalsIgnoreCase(timeSlot) && !appointment.isBooked()) {
+            appointment.book(patient);
+            patient.bookAppointment(appointment);  // FIX: Add to patient's list
+            System.out.println("Appointment booked successfully!");
+            return;
+        }
+    }
+    System.out.println("No available appointment found.");
+}
+    
+    private static void cancelAppointment() {
+    System.out.print("Enter Patient ID: ");
+    int patientId = scanner.nextInt();
+    scanner.nextLine();  
+
+    Patient patient = findPatientById(patientId);
+    if (patient == null) {
+        System.out.println("Patient not found.");
+        return;
+    }
+
+    if (patient.getBookedAppointments().isEmpty()) {
+        System.out.println("No appointments found for this patient.");
+        return;
+    }
+
+    System.out.println("Your Appointments:");
+    for (Appointment appointment : patient.getBookedAppointments()) {
+        System.out.println(appointment);
+    }
+
+    System.out.print("Enter Time Slot to Cancel: ");
+    String timeSlot = scanner.nextLine().trim();
+
+    Iterator<Appointment> iterator = patient.getBookedAppointments().iterator();
+    while (iterator.hasNext()) {
+        Appointment appointment = iterator.next();
+        if (appointment.getTimeSlot().equalsIgnoreCase(timeSlot)) {
+            appointment.cancel(); // Reset appointment status
+            iterator.remove();    // Remove from patient’s list
+            System.out.println("Appointment cancelled.");
+            return;
+        }
+    }
+
+    System.out.println("Appointment not found. Please check the entered time slot.");
+}
 
     public static void viewAllAppointments() {
         for (Physiotherapist physio : physiotherapists) {
