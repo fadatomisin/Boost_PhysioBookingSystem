@@ -59,7 +59,8 @@ public class BoostPhysioBookingSystem {
             System.out.println("4. View All Appointments");
             System.out.println("5. Search Physiotherapists by Expertise");
             System.out.println("6. Generate End-of-Term Report");
-            System.out.println("7. Exit");
+            System.out.println("7. Mark Appointment as Attended");
+            System.out.println("8. Exit");
             
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
@@ -84,8 +85,11 @@ public class BoostPhysioBookingSystem {
                 case 6:
                     generateEndOfTermReport();
                     break;
-
                 case 7:
+                    markAppointmentAsAttended();
+                    break;
+
+                case 8:
                     System.out.println("Exiting system...");
                     return;
                 default:
@@ -185,6 +189,49 @@ public class BoostPhysioBookingSystem {
             physio.displayAppointments();
         }
     }
+    
+    private static void markAppointmentAsAttended() {
+    System.out.print("Enter Patient ID: ");
+    int patientId = scanner.nextInt();
+    scanner.nextLine();  
+
+    Patient patient = findPatientById(patientId);
+    if (patient == null) {
+        System.out.println("Patient not found.");
+        return;
+    }
+
+    if (patient.getBookedAppointments().isEmpty()) {
+        System.out.println("No appointments found for this patient.");
+        return;
+    }
+
+    System.out.println("Your Appointments:");
+    for (Appointment appointment : patient.getBookedAppointments()) {
+        System.out.println(appointment);
+    }
+
+    System.out.print("Enter Time Slot to Mark as Attended: ");
+    String timeSlot = scanner.nextLine().trim();
+
+    Appointment appointmentToUpdate = null;
+
+    for (Appointment appointment : patient.getBookedAppointments()) {
+        if (appointment.getTimeSlot().equalsIgnoreCase(timeSlot)) {
+            appointmentToUpdate = appointment;
+            break;
+        }
+    }
+
+    if (appointmentToUpdate == null) {
+        System.out.println("Appointment not found.");
+        return;
+    }
+
+    appointmentToUpdate.markAsAttended();
+    System.out.println("Appointment marked as attended successfully.");
+}
+
     
     private static void searchByExpertise() {
     System.out.print("Enter area of expertise: ");
