@@ -1,4 +1,0 @@
-Appointment
-Physiotherapist
-BoostPhysioBookingSystem
-Patient
